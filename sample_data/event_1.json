@@ -1,0 +1,9 @@
+{
+  "event_id": 101,
+  "user_id": "user_alpha",
+  "event_type": "login",
+  "timestamp": 1721310000,
+  "page_url": "https://example.com/login",
+  "session_id": "session_001",
+  "details": "User successfully logged in from a new device."
+}

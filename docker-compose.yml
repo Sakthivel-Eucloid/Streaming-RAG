@@ -1,0 +1,65 @@
+networks:
+  rag-net:
+    driver: bridge
+
+services:
+  chroma:
+    image: chromadb/chroma:0.5.0
+    container_name: chroma
+    networks:
+      - rag-net
+    ports:
+      - "8000:8000"
+    volumes:
+      - chroma-data:/chroma/chroma
+    command: "uvicorn chromadb.app:app --host 0.0.0.0 --port 8000 --workers 1 --log-config chromadb/log_config.yml"
+
+  ollama:
+    image: ollama/ollama:latest
+    container_name: ollama
+    networks:
+      - rag-net
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama-data:/root/.ollama
+    entrypoint: /bin/sh
+    # Corrected command with a delay to prevent race conditions.
+    # This starts the server, waits 2 seconds, then pulls the model.
+    command: -c "ollama serve & sleep 2 && ollama pull mistral:7b && wait"
+
+  data-loader:
+    build: ./data-loader
+    container_name: data-loader
+    networks:
+      - rag-net
+    depends_on:
+      - chroma
+    volumes:
+      - ./sample_data:/app/sample_data
+    environment:
+      CHROMA_HOST: "chroma"
+      CHROMA_PORT: 8000
+    restart: 'no'
+
+  streamlit-app:
+    build: ./streamlit-app
+    container_name: streamlit-app
+    networks:
+      - rag-net
+    depends_on:
+      - chroma
+      - ollama
+    ports:
+      - "8501:8501"
+    environment:
+      CHROMA_HOST: "chroma"
+      CHROMA_PORT: 8000
+      OLLAMA_HOST: "ollama"
+    restart: on-failure
+
+volumes:
+  chroma-data:
+    driver: local
+  ollama-data:
+    driver: local

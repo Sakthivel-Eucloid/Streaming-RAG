@@ -1,0 +1,11 @@
+{
+  "event_id": 102,
+  "user_id": "user_beta",
+  "event_type": "add_to_cart",
+  "timestamp": 1721310240,
+  "page_url": "https://example.com/products/super-widget",
+  "session_id": "session_002",
+  "product_id": "SW-123",
+  "quantity": 2,
+  "price": 49.99
+}

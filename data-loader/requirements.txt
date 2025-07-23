@@ -1,0 +1,8 @@
+# Pinning versions to avoid dependency resolution issues and using CPU-only torch.
+--extra-index-url https://download.pytorch.org/whl/cpu
+
+torch==2.3.1
+torchvision==0.18.1
+sentence-transformers==2.7.0
+chromadb==0.5.0
+pandas==2.1.4
